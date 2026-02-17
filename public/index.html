@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบออกรายงาน PDF — สหกรณ์ออมทรัพย์กรมทางหลวง</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Sarabun', 'Tahoma', 'Segoe UI', Arial, sans-serif;
+      background: #e8edf1;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .page-wrapper {
+      max-width: 780px;
+      margin: 30px auto;
+      background: #f4f6f8;
+      border: 1px solid #b0c4d8;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .report-title {
+      background: #f4f6f8;
+      text-align: center;
+      padding: 14px 20px 10px;
+      font-size: 17px;
+      font-weight: bold;
+      color: #1a5276;
+      border-bottom: 1px solid #d5dbdf;
+    }
+
+    .form-body {
+      padding: 16px 20px;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      border: 1px solid #87aec5;
+      border-radius: 3px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .form-label {
+      flex: 0 0 140px;
+      background: #dce8f0;
+      padding: 8px 12px;
+      font-weight: bold;
+      color: #1a5276;
+      font-size: 13px;
+      text-align: right;
+      border-right: 1px solid #87aec5;
+      white-space: nowrap;
+    }
+
+    .form-field {
+      flex: 1;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-field select,
+    .form-field input[type="text"] {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #c0cdd8;
+      border-radius: 3px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: #333;
+    }
+
+    .form-field select:focus,
+    .form-field input:focus {
+      outline: none;
+      border-color: #2e86c1;
+      box-shadow: 0 0 3px rgba(46,134,193,0.3);
+    }
+
+    .form-row-inline {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 0;
+    }
+
+    .form-row-inline .half {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      border: 1px solid #87aec5;
+      border-radius: 3px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .form-row-inline .half:first-child {
+      margin-right: 6px;
+    }
+
+    .form-row-inline .half .form-label {
+      flex: 0 0 110px;
+    }
+
+    .form-row-inline .half .form-field input {
+      width: 100%;
+    }
+
+    /* Checkbox group */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      padding: 2px 0;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      accent-color: #2e86c1;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    /* Export section */
+    .export-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px 16px;
+      border-top: 1px solid #d5dbdf;
+    }
+
+    .back-link {
+      color: #2e86c1;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .export-label {
+      color: #1a5276;
+      font-weight: bold;
+      font-size: 13px;
+      margin-right: 8px;
+    }
+
+    .export-buttons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-export {
+      padding: 7px 18px;
+      border: 2px solid #2e86c1;
+      border-radius: 3px;
+      background: #eaf2f8;
+      color: #1a5276;
+      font-size: 13px;
+      font-weight: bold;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      min-width: 55px;
+      text-align: center;
+    }
+
+    .btn-export:hover {
+      background: #2e86c1;
+      color: #fff;
+    }
+
+    .btn-export.primary {
+      background: #2e86c1;
+      color: #fff;
+      border-color: #1a5276;
+    }
+
+    .btn-export.primary:hover {
+      background: #1a5276;
+    }
+
+    .btn-export:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .loading-box {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 4px solid #dce8f0;
+      border-top-color: #2e86c1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-box p {
+      color: #1a5276;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    /* Status message */
+    .status-msg {
+      display: none;
+      padding: 8px 20px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .status-msg.error {
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+      border-top: 1px solid #f5c6cb;
+    }
+
+    .status-msg.success {
+      display: block;
+      background: #d4edda;
+      color: #155724;
+      border-top: 1px solid #c3e6cb;
+    }
+
+    .status-msg.info {
+      display: block;
+      background: #d1ecf1;
+      color: #0c5460;
+      border-top: 1px solid #bee5eb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+    <div class="report-title">[MBSH-DAY-105] รายงานทะเบียนสมาชิก</div>
+
+    <div class="form-body">
+      <!-- สหกรณ์ -->
+      <div class="form-row">
+        <div class="form-label">สหกรณ์ :</div>
+        <div class="form-field">
+          <select id="coopId" disabled>
+            <option value="056001">สหกรณ์ออมทรัพย์กรมทางหลวง จำกัด</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ประเภทการส่ง / ประเภทสมาชิก -->
+      <div class="form-row">
+        <div class="form-label">ประเภทสมาชิก :</div>
+        <div class="form-field">
+          <select id="membTypeCode">
+            <option value="">เลือกทั้งหมด</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- สังกัด -->
+      <div class="form-row">
+        <div class="form-label">สังกัด :</div>
+        <div class="form-field">
+          <select id="membGroupCode">
+            <option value="">-- ทั้งหมด --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- กลุ่มสมาชิก -->
+      <div class="form-row">
+        <div class="form-label">กลุ่มสมาชิก :</div>
+        <div class="form-field">
+          <select id="membCatCode">
+            <option value="">-- ทั้งหมด --</option>
+            <option value="10">สามัญ ก</option>
+            <option value="50">สามัญ ข</option>
+            <option value="20,30,60">สมทบ</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- สถานะสมาชิก -->
+      <div class="form-row">
+        <div class="form-label">สถานะ :</div>
+        <div class="form-field">
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="memberStatusFilter" value="active" checked> ปกติ</label>
+            <label><input type="checkbox" name="memberStatusFilter" value="resigned"> ลาออก</label>
+            <label><input type="checkbox" name="memberStatusFilter" value="dead"> เสียชีวิต</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- จำนวนแถว -->
+      <div class="form-row">
+        <div class="form-label">จำนวนแถวสูงสุด :</div>
+        <div class="form-field">
+          <select id="rowLimit">
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="500" selected>500</option>
+            <option value="1000">1,000</option>
+            <option value="5000">5,000</option>
+            <option value="0">ทั้งหมด</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="statusMsg" class="status-msg"></div>
+
+    <div class="export-section">
+      <a href="#" class="back-link" onclick="window.history.back(); return false;">&lt;&lt; ย้อนกลับ</a>
+
+      <div class="export-buttons">
+        <span class="export-label">เลือกชนิดออกรายงาน</span>
+        <button class="btn-export primary" onclick="exportReport('pdf')">PDF</button>
+        <button class="btn-export" onclick="exportReport('csv')">CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <p>กำลังสร้างรายงาน...</p>
+      <p id="loadingDetail" style="font-size:12px;color:#666;margin-top:6px;">ข้อมูลมากอาจใช้เวลา 1-3 นาที</p>
+      <p id="loadingTimer" style="font-size:14px;color:#2e86c1;font-weight:bold;margin-top:4px;"></p>
+    </div>
+  </div>
+
+  <script>
+    // Load lookups on page load
+    document.addEventListener("DOMContentLoaded", loadLookups);
+
+    async function loadLookups() {
+      try {
+        const res = await fetch("/api/report/member/lookups");
+        const data = await res.json();
+
+        // Member types
+        const membTypeSelect = document.getElementById("membTypeCode");
+        if (data.membTypes) {
+          data.membTypes.forEach((t) => {
+            const opt = document.createElement("option");
+            opt.value = t.MEMBTYPE_CODE;
+            opt.textContent = `${t.MEMBTYPE_CODE.trim()} - ${t.MEMBTYPE_DESC}`;
+            membTypeSelect.appendChild(opt);
+          });
+        }
+
+        // Member groups (single select)
+        const groupSelect = document.getElementById("membGroupCode");
+        if (data.membGroups) {
+          data.membGroups.forEach((g) => {
+            const opt = document.createElement("option");
+            opt.value = g.MEMBGROUP_CODE;
+            opt.textContent = `${g.MEMBGROUP_CODE.trim()} - ${g.MEMBGROUP_DESC}`;
+            groupSelect.appendChild(opt);
+          });
+        }
+
+        showStatus("โหลดข้อมูลเรียบร้อย พร้อมออกรายงาน", "success");
+        setTimeout(() => hideStatus(), 3000);
+      } catch (err) {
+        showStatus("โหลดข้อมูล lookup ไม่สำเร็จ: " + err.message, "error");
+      }
+    }
+
+    async function exportReport(format) {
+      const params = {
+        membTypeCode: document.getElementById("membTypeCode").value || undefined,
+        membGroupCode: document.getElementById("membGroupCode").value || undefined,
+        membCatCode: document.getElementById("membCatCode").value || undefined,
+        statusFilter: Array.from(document.querySelectorAll('input[name="memberStatusFilter"]:checked')).map(cb => cb.value),
+        limit: parseInt(document.getElementById("rowLimit").value) || 0,
+        format: format,
+      };
+
+      showLoading(true);
+      hideStatus();
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 min timeout
+
+        const res = await fetch("/api/report/member", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Server error");
+        }
+
+        if (format === "csv") {
+          const text = await res.text();
+          downloadBlob(text, "member_report.csv", "text/csv;charset=utf-8");
+        } else {
+          const blob = await res.blob();
+          const sizeMB = (blob.size / 1024 / 1024).toFixed(1);
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+          showStatus(`สร้างรายงานสำเร็จ (${sizeMB} MB) — เปิดในแท็บใหม่แล้ว`, "success");
+          setTimeout(() => hideStatus(), 8000);
+          return;
+        }
+
+        showStatus("สร้างรายงานสำเร็จ", "success");
+        setTimeout(() => hideStatus(), 5000);
+      } catch (err) {
+        if (err.name === "AbortError") {
+          showStatus("หมดเวลา: รายงานใช้เวลานานเกินไป ลองลดจำนวนแถว", "error");
+        } else {
+          showStatus("เกิดข้อผิดพลาด: " + err.message, "error");
+        }
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function downloadBlob(content, filename, type) {
+      const blob = new Blob(["\uFEFF" + content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    let _loadingTimer = null;
+    function showLoading(show) {
+      document.querySelector(".loading-overlay").classList.toggle("active", show);
+      if (show) {
+        const start = Date.now();
+        const timerEl = document.getElementById("loadingTimer");
+        timerEl.textContent = "เวลาที่ใช้: 0 วินาที";
+        _loadingTimer = setInterval(() => {
+          const sec = Math.floor((Date.now() - start) / 1000);
+          if (sec < 60) {
+            timerEl.textContent = `เวลาที่ใช้: ${sec} วินาที`;
+          } else {
+            const min = Math.floor(sec / 60);
+            const s = sec % 60;
+            timerEl.textContent = `เวลาที่ใช้: ${min} นาที ${s} วินาที`;
+          }
+        }, 1000);
+      } else {
+        if (_loadingTimer) { clearInterval(_loadingTimer); _loadingTimer = null; }
+      }
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById("statusMsg");
+      el.textContent = msg;
+      el.className = "status-msg " + type;
+    }
+
+    function hideStatus() {
+      const el = document.getElementById("statusMsg");
+      el.className = "status-msg";
+    }
+  </script>
+
+</body>
+</html>

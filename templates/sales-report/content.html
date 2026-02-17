@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 15mm 20mm 15mm;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sarabun', 'Tahoma', 'Arial', sans-serif;
+      font-size: 12px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    .report-header {
+      text-align: center;
+      border-bottom: 3px solid #2c3e50;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .report-header h1 {
+      font-size: 22px;
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+
+    .report-header .subtitle {
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+
+    .report-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      font-size: 11px;
+      color: #555;
+    }
+
+    /* Summary Cards */
+    .summary-section {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .summary-card {
+      flex: 1;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 12px 15px;
+      text-align: center;
+    }
+
+    .summary-card .label {
+      font-size: 10px;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-card .value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-top: 4px;
+    }
+
+    .summary-card.highlight {
+      background: #2c3e50;
+      border-color: #2c3e50;
+    }
+
+    .summary-card.highlight .label {
+      color: #bdc3c7;
+    }
+
+    .summary-card.highlight .value {
+      color: #fff;
+    }
+
+    /* Table */
+    .section-title {
+      font-size: 14px;
+      color: #2c3e50;
+      border-left: 4px solid #3498db;
+      padding-left: 10px;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 11px;
+    }
+
+    thead th {
+      background: #2c3e50;
+      color: #fff;
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    thead th:first-child {
+      border-radius: 4px 0 0 0;
+    }
+
+    thead th:last-child {
+      border-radius: 0 4px 0 0;
+    }
+
+    tbody td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
+    tbody tr:hover {
+      background: #e8f4fd;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    /* Status badges */
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .status-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-cancelled {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* Footer */
+    .report-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 9px;
+      color: #adb5bd;
+      padding: 10px 15mm;
+      border-top: 1px solid #eee;
+    }
+
+    /* Page break utility */
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Report Header -->
+  <div class="report-header">
+    <h1>{{reportTitle}}</h1>
+    <div class="subtitle">
+      ช่วงเวลา: {{period.startDate}} ถึง {{period.endDate}} | แผนก: {{department}}
+    </div>
+  </div>
+
+  <!-- Meta Info -->
+  <div class="report-meta">
+    <span>วันที่ออกรายงาน: {{generatedAt}}</span>
+    <span>จำนวนรายการ: {{summary.TOTAL_ORDERS}} รายการ</span>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-section">
+    <div class="summary-card highlight">
+      <div class="label">ยอดขายรวม</div>
+      <div class="value">{{formatNumber summary.TOTAL_REVENUE}}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">จำนวนออเดอร์</div>
+      <div class="value">{{summary.TOTAL_ORDERS}}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">ค่าเฉลี่ยต่อออเดอร์</div>
+      <div class="value">{{formatNumber summary.AVG_ORDER_VALUE}}</div>
+    </div>
+  </div>
+
+  <!-- Detail Table -->
+  <h3 class="section-title">รายละเอียดคำสั่งซื้อ</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>เลขที่</th>
+        <th>ลูกค้า</th>
+        <th>วันที่สั่ง</th>
+        <th class="text-right">จำนวนเงิน (บาท)</th>
+        <th class="text-center">สถานะ</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each details}}
+      <tr>
+        <td>{{this.ORDER_ID}}</td>
+        <td>{{this.CUSTOMER_NAME}}</td>
+        <td>{{this.ORDER_DATE}}</td>
+        <td class="text-right">{{formatNumber this.TOTAL_AMOUNT}}</td>
+        <td class="text-center">
+          <span class="status status-{{lowercase this.STATUS}}">{{this.STATUS}}</span>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <!-- Footer -->
+  <div class="report-footer">
+    Generated by Report System | Page {{pageNumber}} of {{totalPages}} | Confidential
+  </div>
+
+</body>
+</html>

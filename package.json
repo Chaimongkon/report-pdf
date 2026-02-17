@@ -1,0 +1,20 @@
+{
+  "name": "report-pdf-oracle",
+  "version": "1.0.0",
+  "description": "PDF Report Generator with jsreport + Oracle DB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@jsreport/jsreport-chrome-pdf": "^4.4.0",
+    "@jsreport/jsreport-core": "^4.9.0",
+    "@jsreport/jsreport-handlebars": "^4.1.0",
+    "@jsreport/jsreport-pdf-utils": "^4.5.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "oracledb": "^6.6.0",
+    "pdf-lib": "^1.17.1"
+  }
+}
