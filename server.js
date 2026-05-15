@@ -1,10 +1,28 @@
 require("dotenv").config();
 
+// Set Chrome path for puppeteer before any module loads
+if (!process.env.PUPPETEER_EXECUTABLE_PATH) {
+  const fs = require("fs");
+  const candidates = [
+    process.env.CHROME_PATH,
+    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  ].filter(Boolean);
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      process.env.PUPPETEER_EXECUTABLE_PATH = p;
+      console.log(`[Chrome] Found: ${p}`);
+      break;
+    }
+  }
+}
+
 const path = require("path");
 const express = require("express");
-const jsreportCore = require("@jsreport/jsreport-core");
 const db = require("./src/db/oracle");
+const pdfRenderer = require("./src/utils/pdfRenderer");
 const reportRoutes = require("./src/routes/report");
+const depositRoutes = require("./src/routes/deposit");
 
 const PORT = process.env.PORT || 3000;
 
@@ -12,33 +30,12 @@ async function startServer() {
   const app = express();
   app.use(express.json());
 
-  // ───── Initialize jsreport ─────
-  console.log("[jsreport] Initializing...");
-  const jsreport = jsreportCore({
-    // Disable jsreport's built-in Express server
-    extensions: {
-      express: { enabled: false },
-    },
-    tempDirectory: "./tmp",
-    loadConfig: false,
-    reportTimeout: 300000, // 5 minutes for large reports
-  });
+  // ───── Initialize PDF Renderer (puppeteer-core@19 + Chrome 109) ─────
+  await pdfRenderer.init();
+  console.log("[PdfRenderer] Initialized successfully");
 
-  jsreport.use(require("@jsreport/jsreport-chrome-pdf")());
-  jsreport.use(require("@jsreport/jsreport-handlebars")());
-
-  // pdf-utils is optional for merge operations
-  try {
-    jsreport.use(require("@jsreport/jsreport-pdf-utils")());
-  } catch (e) {
-    console.log("[jsreport] pdf-utils not loaded (optional):", e.message);
-  }
-
-  await jsreport.init();
-  console.log("[jsreport] Initialized successfully");
-
-  // Store jsreport instance on app for use in routes
-  app.set("jsreport", jsreport);
+  // Store renderer on app for use in routes
+  app.set("pdfRenderer", pdfRenderer);
 
   // ───── Initialize Oracle (optional, skip if not configured) ─────
   const oracleConfigured =
@@ -73,7 +70,8 @@ async function startServer() {
   });
 
   // ───── Routes ─────
-  app.use("/api/report", reportRoutes);
+  app.use("/api/report/deposit", depositRoutes); // More specific route must come first
+  app.use("/api/report", reportRoutes);        // General route comes second
 
   // API info endpoint
   app.get("/api", (req, res) => {
@@ -101,7 +99,7 @@ async function startServer() {
   // Graceful shutdown
   const shutdown = async () => {
     console.log("\n[Server] Shutting down...");
-    await jsreport.close();
+    await pdfRenderer.close();
     await db.close();
     process.exit(0);
   };

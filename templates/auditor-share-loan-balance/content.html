@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  {{#if fonts.regular}}
+  <style>
+    @font-face { font-family: 'THSarabunNew'; src: url('{{{fonts.regular}}}') format('truetype'); font-weight: normal; font-style: normal; }
+  </style>
+  {{/if}}
+  {{#if fonts.bold}}
+  <style>
+    @font-face { font-family: 'THSarabunNew'; src: url('{{{fonts.bold}}}') format('truetype'); font-weight: bold; font-style: normal; }
+  </style>
+  {{/if}}
+  <style>
+    @page { size: A4 landscape; margin: 5mm 5mm 10mm 5mm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'THSarabunNew', 'Sarabun', 'Tahoma', 'Arial', sans-serif; font-size: 12px; color: #333; line-height: 1.3; }
+
+    .report-header { display: flex; align-items: flex-start; border: 1px solid #999; border-radius: 4px; padding: 8px 12px; background: #fff; width: 100%; }
+    .header-cell { padding: 0 0 4px 0; border: none; background: none; }
+    .header-logo { flex: 0 0 60px; margin-right: 10px; }
+    .header-logo img { width: 60px; height: 60px; object-fit: contain; }
+    .header-info { flex: 1; }
+    .header-info .title { font-size: 16px; font-weight: bold; color: #333; }
+    .header-info .date { font-size: 13px; color: #555; }
+    .header-info .coop-name { font-size: 14px; font-weight: bold; color: #333; }
+    .header-info .coop-address { font-size: 11px; color: #777; }
+    .header-filters { flex: 0 0 240px; text-align: right; font-size: 12px; color: #555; line-height: 1.6; }
+    .header-filters .filter-label { color: #888; }
+    .header-filters .filter-value { color: #333; font-weight: 600; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 9.5px; table-layout: auto; }
+    thead th {
+      background: #e0e0e0; color: #000; padding: 3px 3px; text-align: left;
+      font-weight: 700; font-size: 9.5px; white-space: normal; word-wrap: break-word;
+      border-bottom: 1px solid #999; border-top: 1px solid #999; line-height: 1.1;
+    }
+    tbody td {
+      padding: 2.3px 3px; border-bottom: 1px solid #ddd; white-space: nowrap;
+      font-size: 9.5px; overflow: hidden; text-overflow: ellipsis;
+    }
+    tbody tr:nth-child(even) { background: #f5f5f5; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    tfoot td { padding: 3px; font-weight: 700; border-top: 1.5px solid #666; background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="header-cell" colspan="15">
+          <div class="report-header">
+            <div class="header-logo">
+              {{#if logoBase64}}<img src="{{logoBase64}}" alt="logo">{{/if}}
+            </div>
+            <div class="header-info">
+              <div class="title">{{reportTitle}}</div>
+              <div class="date">พิมพ์เมื่อ {{reportDate}}</div>
+              <div class="coop-name">{{coopName}}</div>
+              <div class="coop-address">{{coopAddress}}</div>
+            </div>
+            <div class="header-filters">
+              <div><span class="filter-label">ปี/เดือนบัญชี :</span> <span class="filter-value">{{filterLabels.accountYear}}/{{filterLabels.accountMonth}}</span></div>
+              <div><span class="filter-label">ประเภทเงินกู้ :</span> <span class="filter-value">{{filterLabels.loanTypeDesc}}</span></div>
+              <div><span class="filter-label">หน่วยงาน :</span> <span class="filter-value">{{filterLabels.membGroupDesc}}</span></div>
+              <div><span class="filter-label">จำนวนสัญญา :</span> <span class="filter-value">{{summary.totalContracts}} / {{summary.distinctMembers}} ราย</span></div>
+            </div>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th class="text-center">ลำดับ</th>
+        <th class="text-center">ปีบัญชี</th>
+        <th class="text-center">เดือน</th>
+        <th>เลขทะเบียน</th>
+        <th>ชื่อสมาชิก</th>
+        <th>หน่วยงาน</th>
+        <th>รหัสหุ้น/หนี้</th>
+        <th>เลขที่สัญญา</th>
+        <th class="text-right">ยอดคงเหลือ</th>
+        <th class="text-right">งวดล่าสุด</th>
+        <th class="text-right">งวดทั้งสิ้น</th>
+        <th class="text-right">ค่าหุ้น/งวด</th>
+        <th class="text-right">หุ้นคงเหลือ</th>
+        <th class="text-right">เงินงวด</th>
+        <th class="text-right">ดอกเบี้ยค้าง</th>
+        <th class="text-right">จำนวนวัน</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each items}}
+      <tr>
+        <td class="text-center">{{rowIndex @index @root._rowOffset}}</td>
+        <td class="text-center">{{this.ACCOUNT_YEAR}}</td>
+        <td class="text-center">{{this.ACCOUNT_MONTH}}</td>
+        <td>{{this.MEMBER_NO}}</td>
+        <td>{{truncate this.MEMBER_NAME 22}}</td>
+        <td>{{this.MEMBGROUP_CODE}} {{truncate this.MEMBGROUP_DESC 20}}</td>
+        <td>{{this.LOANTYPE_CODE}}</td>
+        <td>{{this.LOANCONTRACT_NO}}</td>
+        <td class="text-right">{{formatNumber this.PRINCIPAL_BALANCE}}</td>
+        <td class="text-right">{{this.LAST_PERIOD}}</td>
+        <td class="text-right">{{this.MAX_PERIOD}}</td>
+        <td class="text-right">{{formatNumber this.PERIODSHARE_AMT}}</td>
+        <td class="text-right">{{formatNumber this.SHARESTK_AMT}}</td>
+        <td class="text-right">{{formatNumber this.PERIOD_PAYMENT_AMT}}</td>
+        <td class="text-right">{{formatNumber this.INTEREST_ARREAR}}</td>
+        <td class="text-right">{{this.REPORT_DAY}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="8" class="text-right">รวม {{summary.totalContracts}} สัญญา / {{summary.distinctMembers}} ราย</td>
+        <td class="text-right">{{formatNumber summary.totalBalance}}</td>
+        <td colspan="3"></td>
+        <td class="text-right">{{formatNumber summary.totalShareStock}}</td>
+        <td></td>
+        <td class="text-right">{{formatNumber summary.totalIntArrear}}</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+
+</body>
+</html>

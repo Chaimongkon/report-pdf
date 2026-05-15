@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานดอกเบี้ยค้างชำระ (ผู้ตรวจสอบบัญชี)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; background-color: #f8fafc; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 20px 20px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .loading-overlay { display: none; }
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 32px; height: 32px; border: 3px solid #dce8f0; border-top-color: #e11d48; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body class="text-slate-800 h-screen flex overflow-hidden">
+
+    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col shadow-xl z-20 shrink-0 h-full relative">
+        <a href="/" class="h-14 flex items-center px-5 border-b border-slate-700/50 bg-slate-950/30 hover:bg-slate-900 transition-colors">
+            <div class="w-7 h-7 rounded-md bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center mr-2.5 shadow-lg shadow-blue-500/30">
+                <i class="ph-bold ph-chart-line-up text-white text-sm"></i>
+            </div>
+            <span class="text-base font-bold text-white tracking-wide">Report<span class="text-blue-400 font-light">Portal</span></span>
+        </a>
+
+        <div class="p-3 border-b border-slate-700/50">
+            <div class="relative">
+                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" placeholder="ค้นหารายงาน..." class="w-full bg-slate-800 border-none rounded-md py-2 pl-8 pr-3 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-400 transition-all shadow-inner">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-3 px-2 space-y-1">
+            <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-1">หมวดหมู่ระบบ</p>
+
+            <div class="space-y-0.5">
+                <button onclick="toggleMenu('menu-auditor')" class="w-full flex items-center justify-between px-3 py-2 rounded-md bg-rose-600/15 text-rose-400 font-medium transition-colors border border-rose-500/20 text-sm menu-btn" data-target="menu-auditor">
+                    <div class="flex items-center">
+                        <i class="ph ph-shield-check text-base mr-2 text-rose-400"></i>
+                        ผู้ตรวจสอบบัญชี
+                    </div>
+                    <i class="ph ph-caret-down text-xs menu-icon transition-transform duration-300"></i>
+                </button>
+                <div id="menu-auditor" class="submenu pl-9 pr-1 py-1 space-y-0.5 relative before:absolute before:inset-y-0 before:left-5 before:w-px before:bg-slate-800 transition-all duration-300 origin-top">
+
+                    <p class="px-3 pt-1.5 pb-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">ระบบสมาชิกและเงินให้กู้</p>
+
+                    <a href="/auditor-member-registry.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">1. รายงานทะเบียนสมาชิก</span>
+                    </a>
+                    <a href="/auditor-loan-approval.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">2. รายละเอียดอนุมัติและจ่ายเงินกู้</span>
+                    </a>
+                    <a href="/auditor-share-loan-balance.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">3. หุ้น-หนี้คงเหลือรายตัว</span>
+                    </a>
+                    <a href="/auditor-interest-arrears.html" class="relative flex items-center px-3 py-1.5 text-xs rounded bg-rose-600 text-white shadow shadow-rose-500/20 group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-rose-500"></span>
+                        <span class="truncate block w-full">4. ดอกเบี้ย/งวดค้างชำระ</span>
+                    </a>
+                    <a href="/auditor-monthly-collection.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">5. ส่งเก็บหุ้น-หนี้ เงินรับฝาก</span>
+                    </a>
+                    <a href="/auditor-loan-statement.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">6. Statement หนี้รายตัว</span>
+                    </a>
+                    <a href="/auditor-share-statement.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">7. Statement หุ้นรายตัว</span>
+                    </a>
+
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">ระบบเงินรับฝาก</p>
+                    <a href="/deposit-transaction.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">1. รายงานฝาก/ถอน เงินฝาก</span>
+                    </a>
+                    <a href="/deposit-interest-tax.html" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">2. สรุปดอกเบี้ย/ภาษีหัก ณ ที่จ่าย</span>
+                    </a>
+                    <a href="#" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">3. ดอกเบี้ยค้างจ่าย</span>
+                    </a>
+                    <a href="#" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">4. ยอดคงเหลือเงินรับฝาก</span>
+                    </a>
+                    <a href="#" class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span class="truncate block w-full">5. การเคลื่อนไหวเงินฝากรายตัว</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 border-t border-slate-700/50 bg-slate-900 text-[10px] text-slate-500 flex justify-between items-center shrink-0">
+            <span>Intranet Secure</span>
+            <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</span>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 bg-transparent h-full overflow-y-auto relative">
+        <header class="h-14 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-5 sticky top-0 z-10 shrink-0">
+            <div class="flex items-center text-xs font-medium text-slate-500">
+                <a href="/" class="hover:text-rose-600 transition-colors flex items-center"><i class="ph-fill ph-house mr-1"></i> หน้าหลัก</a>
+                <i class="ph ph-caret-right mx-1.5 text-slate-300 text-[10px]"></i>
+                <a href="#" class="hover:text-rose-600 transition-colors">ผู้ตรวจสอบบัญชี</a>
+                <i class="ph ph-caret-right mx-1.5 text-slate-300 text-[10px]"></i>
+                <span class="text-slate-800 px-1.5 py-0.5 bg-slate-100 rounded text-xs border border-slate-200">ดอกเบี้ย/งวดค้างชำระ</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center space-x-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-100/50 shadow-sm">
+                    <i class="ph-fill ph-check-circle text-sm"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-wider">Internal Use</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 p-4 sm:p-5 lg:p-6">
+            <div class="max-w-4xl mx-auto">
+
+                <div id="statusContainer" class="hidden mb-4 px-3 py-2.5 rounded-lg border flex items-center justify-between text-xs shadow-sm bg-white/50 backdrop-blur-sm">
+                    <div class="flex items-center gap-2">
+                        <i id="statusIcon" class="ph-fill ph-info text-lg"></i>
+                        <span id="statusText" class="font-medium"></span>
+                    </div>
+                    <button onclick="hideStatus()" class="text-slate-500 hover:text-slate-800"><i class="ph ph-x text-sm"></i></button>
+                </div>
+
+                <div class="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
+                            <span class="bg-gradient-to-br from-rose-50 to-rose-100/50 text-rose-600 p-2 rounded-lg shadow-sm border border-rose-100">
+                                <i class="ph-fill ph-warning-octagon"></i>
+                            </span>
+                            รายงานดอกเบี้ยค้างชำระ และจำนวนงวดที่ค้างชำระ
+                        </h1>
+                        <p class="text-slate-500 mt-1.5 text-xs flex items-center gap-1.5">
+                            <i class="ph-fill ph-info text-rose-400 text-sm"></i>
+                            <span>สำหรับผู้ตรวจสอบบัญชี — 8 ฟิลด์: เลขสมาชิก, ชื่อ, หน่วยงาน, สัญญา, หนี้คงเหลือ, งวดค้าง, ดอกเบี้ยค้าง</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white/95 backdrop-blur-xl rounded-xl shadow-sm border border-slate-200/80 overflow-hidden relative transition-all hover:shadow-md">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 via-pink-500 to-fuchsia-500 opacity-90"></div>
+
+                    <div class="p-5 md:p-6">
+                        <form class="space-y-5" onsubmit="event.preventDefault();">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                        <i class="ph-fill ph-calendar text-rose-500 text-sm"></i>
+                                        ข้อมูล ณ วันที่
+                                        <span class="text-rose-500 text-[10px]">*</span>
+                                    </label>
+                                    <input type="date" id="asOfDate" value="2026-04-30"
+                                        class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-3 text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-rose-500/30 focus:border-rose-500 hover:border-rose-400 shadow-sm transition-all cursor-pointer">
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700">เงื่อนไขการค้าง</label>
+                                    <div class="relative group">
+                                        <select id="filterMode" class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-8 text-slate-700 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-rose-500/30 focus:border-rose-500 hover:border-rose-400 shadow-sm transition-all cursor-pointer">
+                                            <option value="all_overdue" selected>ดอกเบี้ยค้าง หรือ ค้างเกิน 1 เดือน</option>
+                                            <option value="int_only">เฉพาะมีดอกเบี้ยค้าง (INTEREST_ARREAR > 0)</option>
+                                        </select>
+                                        <i class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700">เลขทะเบียนสมาชิก (เฉพาะคน)</label>
+                                    <input type="text" id="memberNo" placeholder="เช่น 00030158"
+                                        class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-3 text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-rose-500/30 focus:border-rose-500 hover:border-rose-400 shadow-sm transition-all">
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700">หน่วยงาน/สังกัด</label>
+                                    <div class="relative group">
+                                        <select id="membGroupCode" class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-8 text-slate-700 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-rose-500/30 focus:border-rose-500 hover:border-rose-400 shadow-sm transition-all cursor-pointer">
+                                            <option value="">-- ทั้งหมด --</option>
+                                        </select>
+                                        <i class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700">จำนวนแถวสูงสุด</label>
+                                    <div class="relative group">
+                                        <select id="rowLimit" class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-8 text-slate-700 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-rose-500/30 focus:border-rose-500 hover:border-rose-400 shadow-sm transition-all cursor-pointer">
+                                            <option value="500">500 แถว</option>
+                                            <option value="1000" selected>1,000 แถว</option>
+                                            <option value="5000">5,000 แถว</option>
+                                            <option value="0">ทั้งหมด</option>
+                                        </select>
+                                        <i class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="bg-slate-50/80 border-t border-slate-100 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-0">
+                        <button onclick="window.location.href='/'" class="text-slate-500 hover:text-slate-800 font-semibold text-xs flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-md hover:bg-slate-200/50">
+                            <i class="ph-bold ph-arrow-left"></i> ย้อนกลับ
+                        </button>
+
+                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                            <span class="text-xs font-medium text-slate-400 hidden sm:block">เลือกรูปแบบไฟล์:</span>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button onclick="exportReport('pdf')" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-gradient-to-br from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white px-5 py-2 rounded-lg font-bold shadow-sm shadow-rose-500/20 transition-all hover:-translate-y-px focus:ring-2 focus:ring-rose-500/50 focus:outline-none active:scale-95 text-sm">
+                                    <i class="ph-bold ph-file-pdf text-base"></i>
+                                    <span>ออก PDF</span>
+                                </button>
+                                <button onclick="exportReport('csv')" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-5 py-2 rounded-lg font-bold shadow-sm shadow-emerald-500/20 transition-all hover:-translate-y-px focus:ring-2 focus:ring-emerald-500/50 focus:outline-none active:scale-95 text-sm">
+                                    <i class="ph-bold ph-file-csv text-base"></i>
+                                    <span>ออก CSV</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div class="loading-overlay fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex-col items-center justify-center" id="loadingOverlay">
+        <div class="bg-white p-6 rounded-xl shadow-2xl text-center max-w-sm w-full mx-4 border border-slate-100">
+            <div class="spinner"></div>
+            <p class="text-slate-800 font-bold mb-1 text-sm">กำลังสร้างรายงาน...</p>
+            <p id="loadingDetail" class="text-slate-500 text-xs mb-3">กรุณารอสักครู่</p>
+            <div class="bg-rose-50 text-rose-700 py-1.5 px-3 rounded-md font-mono font-medium text-xs inline-block">
+                <span id="loadingTimer">เวลา: 0 วิ</span>
+            </div>
+            <button onclick="cancelReport()" class="mt-5 w-full py-2 bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 group">
+                <i class="ph-bold ph-x-circle text-sm group-hover:scale-110 transition-transform"></i> ยกเลิกการสร้าง
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadLookups);
+
+        async function loadLookups() {
+            try {
+                const res = await fetch("/api/report/auditor/interest-arrears/lookups");
+                const data = await res.json();
+                const groupSelect = document.getElementById("membGroupCode");
+                if (data.membGroups) {
+                    data.membGroups.forEach((g) => {
+                        const opt = document.createElement("option");
+                        opt.value = g.MEMBGROUP_CODE;
+                        opt.textContent = `${g.MEMBGROUP_CODE.trim()} - ${g.MEMBGROUP_DESC}`;
+                        groupSelect.appendChild(opt);
+                    });
+                }
+            } catch (err) {
+                showStatus("โหลดข้อมูล lookup ไม่สำเร็จ: " + err.message, "error");
+            }
+        }
+
+        let currentAbortController = null;
+        let isUserCancelled = false;
+
+        function cancelReport() {
+            if (currentAbortController) {
+                isUserCancelled = true;
+                currentAbortController.abort();
+                currentAbortController = null;
+                showLoading(false);
+                showStatus("คุณได้ยกเลิกการสร้างรายงานแล้ว", "error");
+            }
+        }
+
+        async function exportReport(format) {
+            const asOfDate = document.getElementById("asOfDate").value;
+            if (!asOfDate) {
+                showStatus("กรุณาระบุวันที่", "error");
+                return;
+            }
+            const clientId = 'client_' + Math.random().toString(36).substring(2, 15);
+            const memberNo = document.getElementById("memberNo").value.trim();
+            const params = {
+                asOfDate,
+                filterMode: document.getElementById("filterMode").value,
+                memberNo: memberNo ? memberNo.padStart(8, '0') : undefined,
+                membGroupCode: document.getElementById("membGroupCode").value || undefined,
+                limit: parseInt(document.getElementById("rowLimit").value) || 0,
+                format,
+                clientId
+            };
+
+            showLoading(true, "กำลังเชื่อมต่อเพื่อสร้างรายงาน...");
+            hideStatus();
+            isUserCancelled = false;
+
+            let evtSource = null;
+            let countInterval = null;
+
+            try {
+                evtSource = new EventSource(`/api/report/progress?clientId=${clientId}`);
+                evtSource.onmessage = function (event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (countInterval) { clearInterval(countInterval); countInterval = null; }
+                        if (data.action === 'count') {
+                            const detailEl = document.getElementById("loadingDetail");
+                            let current = data.current || 0;
+                            const total = data.total || 0;
+                            const prefix = data.prefix || "";
+                            const suffix = data.suffix || "";
+                            const intervalMs = 30;
+                            const steps = 3000 / intervalMs;
+                            const increment = Math.max(1, Math.ceil(total / steps));
+                            detailEl.textContent = `${prefix}${current.toLocaleString('en-US')} / ${total.toLocaleString('en-US')}${suffix}`;
+                            countInterval = setInterval(() => {
+                                current += increment;
+                                if (current >= total) { current = total; clearInterval(countInterval); }
+                                detailEl.textContent = `${prefix}${current.toLocaleString('en-US')} / ${total.toLocaleString('en-US')}${suffix}`;
+                            }, intervalMs);
+                        } else if (data.message) {
+                            document.getElementById("loadingDetail").textContent = data.message;
+                        }
+                    } catch (e) { }
+                };
+
+                currentAbortController = new AbortController();
+                const timeoutId = setTimeout(() => { if (currentAbortController) currentAbortController.abort(); }, 600000);
+
+                const res = await fetch("/api/report/auditor/interest-arrears", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(params),
+                    signal: currentAbortController.signal,
+                });
+                clearTimeout(timeoutId);
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || "Server error");
+                }
+
+                if (format === "csv") {
+                    const text = await res.text();
+                    downloadBlob(text, "auditor_interest_arrears.csv", "text/csv;charset=utf-8");
+                    showStatus("สร้างรายงาน CSV สำเร็จ", "success");
+                } else {
+                    const blob = await res.blob();
+                    const sizeMB = (blob.size / 1024 / 1024).toFixed(1);
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, "_blank");
+                    showStatus(`สร้างรายงาน PDF สำเร็จ (${sizeMB} MB) — เปิดในแท็บใหม่แล้ว`, "success");
+                }
+                setTimeout(() => hideStatus(), 8000);
+            } catch (err) {
+                if ((err.name === "AbortError" && !isUserCancelled) || (!isUserCancelled && err.message === "Request cancelled by client")) {
+                    showStatus("หมดเวลา: รายงานใช้เวลานานเกินไป", "error");
+                } else if (!isUserCancelled) {
+                    showStatus("เกิดข้อผิดพลาด: " + err.message, "error");
+                }
+            } finally {
+                currentAbortController = null;
+                if (countInterval) clearInterval(countInterval);
+                if (evtSource) evtSource.close();
+                showLoading(false);
+            }
+        }
+
+        function downloadBlob(content, filename, type) {
+            const blob = new Blob(["﻿" + content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        let _loadingTimer = null;
+        function showLoading(show, message = "กรุณารอสักครู่") {
+            const overlay = document.getElementById("loadingOverlay");
+            const loadingDetail = document.getElementById("loadingDetail");
+            if (show) {
+                loadingDetail.textContent = message;
+                overlay.style.display = "flex";
+                const start = Date.now();
+                const timerEl = document.getElementById("loadingTimer");
+                timerEl.textContent = "เวลา: 0 วิ";
+                _loadingTimer = setInterval(() => {
+                    const sec = Math.floor((Date.now() - start) / 1000);
+                    if (sec < 60) timerEl.textContent = `เวลา: ${sec} วิ`;
+                    else timerEl.textContent = `เวลา: ${Math.floor(sec/60)} นาที ${sec%60} วิ`;
+                }, 1000);
+            } else {
+                overlay.style.display = "none";
+                if (_loadingTimer) { clearInterval(_loadingTimer); _loadingTimer = null; }
+            }
+        }
+
+        function showStatus(msg, type) {
+            const container = document.getElementById("statusContainer");
+            const icon = document.getElementById("statusIcon");
+            const text = document.getElementById("statusText");
+            container.className = "mb-4 px-3 py-2.5 rounded-lg border flex items-center justify-between text-xs shadow-sm bg-white/90 backdrop-blur-sm transition-all";
+            if (type === "error") { container.classList.add("bg-rose-50/90", "border-rose-200", "text-rose-700"); icon.className = "ph-fill ph-warning-circle text-rose-500 text-base"; }
+            else if (type === "success") { container.classList.add("bg-emerald-50/90", "border-emerald-200", "text-emerald-700"); icon.className = "ph-fill ph-check-circle text-emerald-500 text-base"; }
+            else { container.classList.add("bg-blue-50/90", "border-blue-200", "text-blue-700"); icon.className = "ph-fill ph-info text-blue-500 text-base"; }
+            text.textContent = msg;
+            container.style.display = "flex";
+        }
+
+        function hideStatus() {
+            document.getElementById("statusContainer").style.display = "none";
+        }
+
+        function toggleMenu(menuId) {
+            const submenu = document.getElementById(menuId);
+            const btn = document.querySelector(`button[data-target="${menuId}"]`);
+            const icon = btn.querySelector('.menu-icon');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+                icon.classList.remove('-rotate-90');
+                icon.classList.add('ph-caret-down');
+                icon.classList.remove('ph-caret-right');
+            } else {
+                submenu.style.display = 'none';
+                icon.classList.add('-rotate-90');
+                icon.classList.add('ph-caret-right');
+                icon.classList.remove('ph-caret-down');
+            }
+        }
+    </script>
+</body>
+</html>

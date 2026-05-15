@@ -125,14 +125,12 @@
                 </button>
                 <!-- Sub Menu -->
                 <div id="menu-mbsh"
-                    class="submenu pl-9 pr-1 py-1 space-y-0.5 relative before:absolute before:inset-y-0 before:left-5 before:w-px before:bg-slate-800 transition-all duration-300 origin-top"
-                    style="display: none;">
-                    <!-- Standard Sub Item -->
+                    class="submenu pl-9 pr-1 py-1 space-y-0.5 relative before:absolute before:inset-y-0 before:left-5 before:w-px before:bg-slate-800 transition-all duration-300 origin-top">
+                    <!-- Active Sub Item -->
                     <a href="/mbsh-day-105.html"
-                        class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
-                        <span
-                            class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
-                        <span class="truncate block w-full" title="[MBSH-DAY-105] ทะเบียนสมาชิก">[MBSH-DAY-105]
+                        class="relative flex items-center px-3 py-1.5 text-xs rounded bg-blue-600 text-white shadow shadow-blue-500/20 group">
+                        <span class="absolute -left-[17px] w-4 h-px bg-blue-500"></span>
+                        <span class="truncate block w-full" title="[MBSH-DAY-105] รายงานทะเบียนสมาชิก">[MBSH-DAY-105]
                             ทะเบียนสมาชิก</span>
                     </a>
 
@@ -149,26 +147,29 @@
             <!-- Menu Item: Closed -->
             <div class="space-y-0.5">
                 <button onclick="toggleMenu('menu-deposit')"
-                    class="w-full flex items-center justify-between px-3 py-2 rounded-md bg-blue-600/15 text-blue-400 font-medium transition-colors border border-blue-500/20 mt-1 text-sm menu-btn"
+                    class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-slate-800 hover:text-white transition-colors mt-1 text-slate-400 group text-sm menu-btn"
                     data-target="menu-deposit">
                     <div class="flex items-center">
-                        <i class="ph-fill ph-piggy-bank text-base mr-2 text-blue-400"></i>
+                        <i class="ph ph-piggy-bank text-base mr-2 group-hover:text-emerald-400 transition-colors"></i>
                         ระบบเงินฝาก
                     </div>
-                    <i class="ph ph-caret-down text-xs menu-icon transition-transform duration-300"></i>
+                    <i class="ph ph-caret-right text-xs menu-icon transition-transform duration-300 -rotate-90"></i>
                 </button>
                 <div id="menu-deposit"
-                    class="submenu pl-9 pr-1 py-1 space-y-0.5 relative before:absolute before:inset-y-0 before:left-5 before:w-px before:bg-slate-800 transition-all duration-300 origin-top">
-                    <!-- Active Submenu Item for RPTM0009 -->
+                    class="submenu pl-9 pr-1 py-1 space-y-0.5 relative before:absolute before:inset-y-0 before:left-5 before:w-px before:bg-slate-800 transition-all duration-300 origin-top"
+                    style="display: none;">
+                    <!-- Standard Submenu Item for RPTM0009 -->
                     <a href="/rptm0009.html"
-                        class="relative flex items-center px-3 py-1.5 text-xs rounded bg-blue-600 text-white shadow shadow-blue-500/20 group">
-                        <span class="absolute -left-[17px] w-4 h-px bg-blue-500"></span>
+                        class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
+                        <span
+                            class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
                         <span class="truncate block w-full" title="[RPTM0009] รายงาน 7 คำนวณเงินฝาก 24">[RPTM0009]
                             คำนวณเงินฝาก 24</span>
                     </a>
                     <a href="/new-member-deposit.html"
                         class="relative flex items-center px-3 py-1.5 text-xs rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors group">
-                        <span class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
+                        <span
+                            class="absolute -left-[17px] w-4 h-px bg-slate-700 group-hover:bg-slate-500 transition-colors"></span>
                         <span class="truncate block w-full" title="รายงานสมาชิกใหม่ที่มีบัญชีเงินฝาก">สมาชิกใหม่บัญชีเงินฝาก</span>
                     </a>
                 </div>
@@ -227,10 +228,10 @@
                 <a href="/" class="hover:text-blue-600 transition-colors flex items-center"><i
                         class="ph-fill ph-house mr-1"></i> หน้าหลัก</a>
                 <i class="ph ph-caret-right mx-1.5 text-slate-300 text-[10px]"></i>
-                <a href="#" class="hover:text-blue-600 transition-colors">ระบบเงินฝาก</a>
+                <a href="#" class="hover:text-blue-600 transition-colors">ระบบสมาชิกและหุ้น</a>
                 <i class="ph ph-caret-right mx-1.5 text-slate-300 text-[10px]"></i>
                 <span
-                    class="text-slate-800 px-1.5 py-0.5 bg-slate-100 rounded text-xs border border-slate-200">[RPTM0009]</span>
+                    class="text-slate-800 px-1.5 py-0.5 bg-slate-100 rounded text-xs border border-slate-200">[MBSH-DAY-105]</span>
             </div>
             <div class="flex items-center gap-3">
                 <div
@@ -263,9 +264,9 @@
                             class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
                             <span
                                 class="bg-gradient-to-br from-blue-50 to-blue-100/50 text-blue-600 p-2 rounded-lg shadow-sm border border-blue-100">
-                                <i class="ph-fill ph-clock-counter-clockwise"></i>
+                                <i class="ph-fill ph-file-text"></i>
                             </span>
-                            [RPTM0009] รายงาน 7 คำนวณเงินฝาก 24
+                            รายงานทะเบียนสมาชิก
                         </h1>
                         <p class="text-slate-500 mt-1.5 text-xs flex items-center gap-1.5">
                             <i class="ph-fill ph-info text-blue-400 text-sm"></i>
@@ -286,37 +287,143 @@
                         <form class="space-y-5" onsubmit="event.preventDefault();">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
-                                <!-- สาขา -->
+
+                                <!-- สหกรณ์ -->
                                 <div class="space-y-1.5">
-                                    <label class="text-xs font-semibold text-slate-700">สาขา</label>
+                                    <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                        สหกรณ์
+                                        <span class="text-rose-500 text-[10px]">*</span>
+                                    </label>
                                     <div class="relative group">
-                                        <select id="branchCode"
+                                        <select id="coopId" disabled
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-3 pr-8 text-slate-500 text-sm appearance-none shadow-sm cursor-not-allowed">
+                                            <option value="056001">สหกรณ์ออมทรัพย์กรมทางหลวง จำกัด</option>
+                                        </select>
+                                        <i
+                                            class="ph-bold ph-lock-key absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">ล็อคตามหน่วยงานหลักของคุณ</p>
+                                </div>
+
+                                <!-- ข้อมูล ณ วันที่ -->
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                        <i class="ph-fill ph-calendar text-blue-500 text-sm"></i>
+                                        ข้อมูล ณ วันที่
+                                    </label>
+                                    <div class="relative group">
+                                        <input type="date" id="asOfDate"
+                                            class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-3 text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/30 focus:border-blue-500 hover:border-blue-400 shadow-sm transition-all cursor-pointer">
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">ว่างไว้ = ข้อมูลปัจจุบัน (สมาชิกทั้งหมดที่ยังไม่ลาออก/เสียชีวิต)</p>
+                                </div>
+
+                                <!-- ประเภทสมาชิก -->
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700">ประเภทสมาชิก</label>
+                                    <div class="relative group">
+                                        <select id="membTypeCode"
                                             class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-8 text-slate-700 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500/30 focus:border-blue-500 hover:border-blue-400 shadow-sm transition-all cursor-pointer">
-                                            <option value="">กำลังโหลด...</option>
+                                            <option value="">เลือกทั้งหมด</option>
                                         </select>
                                         <i
                                             class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-blue-500 transition-colors pointer-events-none text-xs"></i>
                                     </div>
                                 </div>
 
-                                <!-- วันที่ -->
+                                <!-- สังกัด -->
                                 <div class="space-y-1.5">
-                                    <label class="text-xs font-semibold text-slate-700">วันที่</label>
+                                    <label class="text-xs font-semibold text-slate-700">สังกัด</label>
                                     <div class="relative group">
-                                        <input type="date" id="reportDate"
-                                            class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-3 text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/30 focus:border-blue-500 hover:border-blue-400 shadow-sm transition-all" />
+                                        <select id="membGroupCode"
+                                            class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-8 text-slate-700 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500/30 focus:border-blue-500 hover:border-blue-400 shadow-sm transition-all cursor-pointer">
+                                            <option value="">-- ทั้งหมด --</option>
+                                        </select>
+                                        <i
+                                            class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-blue-500 transition-colors pointer-events-none text-xs"></i>
                                     </div>
                                 </div>
 
-                                <!-- ข้อมูลเพิ่มเติม -->
+                                <!-- กลุ่มสมาชิก -->
                                 <div class="space-y-1.5">
-                                    <label class="text-xs font-semibold text-slate-700">แหล่งข้อมูล</label>
-                                    <div class="flex items-center gap-2 py-2 px-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                                        <i class="ph-fill ph-database text-emerald-600 text-sm"></i>
-                                        <span class="text-xs text-emerald-700 font-medium">Oracle Database (ข้อมูลจริง)</span>
+                                    <label class="text-xs font-semibold text-slate-700">กลุ่มสมาชิก</label>
+                                    <div class="relative group">
+                                        <select id="membCatCode"
+                                            class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-8 text-slate-700 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500/30 focus:border-blue-500 hover:border-blue-400 shadow-sm transition-all cursor-pointer">
+                                            <option value="">-- ทั้งหมด --</option>
+                                            <option value="10">สามัญ ก</option>
+                                            <option value="50">สามัญ ข</option>
+                                            <option value="20,30,60">สมทบ</option>
+                                        </select>
+                                        <i
+                                            class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-blue-500 transition-colors pointer-events-none text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-full h-px bg-slate-100 my-6"></div>
+
+                            <!-- สถานะ และ จำนวนแถว -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+                                <!-- สถานะ -->
+                                <div class="space-y-2">
+                                    <label class="text-xs font-semibold text-slate-700">สถานะสมาชิก <span
+                                            class="text-[10px] font-normal text-slate-400 ml-1">(เลือกได้มากกว่า
+                                            1)</span></label>
+                                    <div class="flex flex-wrap gap-2.5">
+                                        <!-- Custom Checkbox -->
+                                        <label
+                                            class="flex items-center gap-1.5 p-1.5 pr-3 rounded bg-white border border-slate-200 hover:bg-blue-50 hover:border-blue-200 cursor-pointer transition-all shadow-sm">
+                                            <div class="relative flex items-center justify-center w-4 h-4 ml-0.5">
+                                                <input type="checkbox" name="memberStatusFilter" value="active" checked
+                                                    class="peer appearance-none w-4 h-4 border-[1.5px] border-slate-300 rounded-[3px] text-blue-600 checked:bg-blue-600 checked:border-blue-600 focus:ring-1 focus:ring-blue-500 focus:ring-offset-0 transition-all">
+                                                <i
+                                                    class="ph-bold ph-check absolute text-white opacity-0 peer-checked:opacity-100 text-[10px] pointer-events-none transition-opacity"></i>
+                                            </div>
+                                            <span class="text-xs font-medium text-slate-700">ปกติ</span>
+                                        </label>
+
+                                        <label
+                                            class="flex items-center gap-1.5 p-1.5 pr-3 rounded bg-white border border-slate-200 hover:bg-blue-50 hover:border-blue-200 cursor-pointer transition-all shadow-sm">
+                                            <div class="relative flex items-center justify-center w-4 h-4 ml-0.5">
+                                                <input type="checkbox" name="memberStatusFilter" value="resigned"
+                                                    class="peer appearance-none w-4 h-4 border-[1.5px] border-slate-300 rounded-[3px] text-blue-600 checked:bg-blue-600 checked:border-blue-600 focus:ring-1 focus:ring-blue-500 focus:ring-offset-0 transition-all">
+                                                <i
+                                                    class="ph-bold ph-check absolute text-white opacity-0 peer-checked:opacity-100 text-[10px] pointer-events-none transition-opacity"></i>
+                                            </div>
+                                            <span class="text-xs font-medium text-slate-700">ลาออก</span>
+                                        </label>
+
+                                        <label
+                                            class="flex items-center gap-1.5 p-1.5 pr-3 rounded bg-white border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all shadow-sm">
+                                            <div class="relative flex items-center justify-center w-4 h-4 ml-0.5">
+                                                <input type="checkbox" name="memberStatusFilter" value="dead"
+                                                    class="peer appearance-none w-4 h-4 border-[1.5px] border-slate-300 rounded-[3px] text-slate-600 checked:bg-slate-500 checked:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:ring-offset-0 transition-all">
+                                                <i
+                                                    class="ph-bold ph-check absolute text-white opacity-0 peer-checked:opacity-100 text-[10px] pointer-events-none transition-opacity"></i>
+                                            </div>
+                                            <span class="text-xs font-medium text-slate-700">เสียชีวิต</span>
+                                        </label>
                                     </div>
                                 </div>
 
+                                <!-- จำนวนแถวสูงสุด -->
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-semibold text-slate-700">จำนวนแถวสูงสุด</label>
+                                    <div class="relative group">
+                                        <select id="rowLimit"
+                                            class="w-full bg-white border border-slate-300 rounded-lg py-2 pl-3 pr-8 text-slate-700 text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500/30 focus:border-blue-500 hover:border-blue-400 shadow-sm transition-all cursor-pointer">
+                                            <option value="100">100 แถว</option>
+                                            <option value="200">200 แถว</option>
+                                            <option value="500" selected>500 แถว</option>
+                                            <option value="1000">1,000 แถว</option>
+                                            <option value="5000">5,000 แถว</option>
+                                            <option value="0">ทั้งหมด (อาจใช้เวลานาน)</option>
+                                        </select>
+                                        <i
+                                            class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-blue-500 transition-colors pointer-events-none text-xs"></i>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -375,20 +482,28 @@
 
         async function loadLookups() {
             try {
-                // Set default date to today
-                document.getElementById('reportDate').valueAsDate = new Date();
-
-                const res = await fetch("/api/report/deposit/lookups");
+                const res = await fetch("/api/report/member/lookups");
                 const data = await res.json();
 
-                const branchSelect = document.getElementById("branchCode");
-                branchSelect.innerHTML = "";
-                if (data.branches) {
-                    data.branches.forEach((b) => {
+                // Member types
+                const membTypeSelect = document.getElementById("membTypeCode");
+                if (data.membTypes) {
+                    data.membTypes.forEach((t) => {
                         const opt = document.createElement("option");
-                        opt.value = b.BRANCH_CODE;
-                        opt.textContent = `${b.BRANCH_DESC}`;
-                        branchSelect.appendChild(opt);
+                        opt.value = t.MEMBTYPE_CODE;
+                        opt.textContent = `${t.MEMBTYPE_CODE.trim()} - ${t.MEMBTYPE_DESC}`;
+                        membTypeSelect.appendChild(opt);
+                    });
+                }
+
+                // Member groups (single select)
+                const groupSelect = document.getElementById("membGroupCode");
+                if (data.membGroups) {
+                    data.membGroups.forEach((g) => {
+                        const opt = document.createElement("option");
+                        opt.value = g.MEMBGROUP_CODE;
+                        opt.textContent = `${g.MEMBGROUP_CODE.trim()} - ${g.MEMBGROUP_DESC}`;
+                        groupSelect.appendChild(opt);
                     });
                 }
             } catch (err) {
@@ -414,9 +529,12 @@
             const clientId = 'client_' + Math.random().toString(36).substring(2, 15);
 
             const params = {
-                branchCode: document.getElementById("branchCode").value || undefined,
-                date: document.getElementById("reportDate").value || undefined,
-                limit: 0, // No limit — fetch all records from Oracle
+                membTypeCode: document.getElementById("membTypeCode").value || undefined,
+                membGroupCode: document.getElementById("membGroupCode").value || undefined,
+                membCatCode: document.getElementById("membCatCode").value || undefined,
+                asOfDate: document.getElementById("asOfDate").value || undefined,
+                statusFilter: Array.from(document.querySelectorAll('input[name="memberStatusFilter"]:checked')).map(cb => cb.value),
+                limit: parseInt(document.getElementById("rowLimit").value) || 0,
                 format: format,
                 clientId: clientId // Send clientId to the backend
             };
@@ -430,7 +548,7 @@
 
             try {
                 // Subscribe to Server-Sent Events to get live updates
-                evtSource = new EventSource(`/api/report/deposit/progress?clientId=${clientId}`);
+                evtSource = new EventSource(`/api/report/progress?clientId=${clientId}`);
                 evtSource.onmessage = function (event) {
                     try {
                         const data = JSON.parse(event.data);
@@ -474,7 +592,7 @@
                     }
                 }, 600000); // 10 min timeout
 
-                const res = await fetch("/api/report/deposit/rptm0009", {
+                const res = await fetch("/api/report/member", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(params),
@@ -495,19 +613,12 @@
                     const blob = await res.blob();
                     const sizeMB = (blob.size / 1024 / 1024).toFixed(1);
                     const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.target = "_blank";
-                    a.rel = "noopener";
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    window.open(url, "_blank");
                     showStatus(`สร้างรายงาน PDF สำเร็จ (${sizeMB} MB) — เปิดในแท็บใหม่แล้ว`, "success");
                 }
 
                 setTimeout(() => hideStatus(), 8000);
             } catch (err) {
-                console.error("Export Report Error:", err);
                 if ((err.name === "AbortError" && !isUserCancelled) || (!isUserCancelled && err.message === "Request cancelled by client")) {
                     showStatus("หมดเวลา: รายงานใช้เวลานานเกินไป กรุณาลดจำนวนข้อมูล", "error");
                 } else if (!isUserCancelled) {

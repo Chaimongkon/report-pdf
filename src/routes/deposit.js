@@ -38,15 +38,27 @@ const CHROME_LANDSCAPE = {
 // Re-using the same helpers from report.js for this router file
 const HELPERS_JS = `
 function formatNumber(value) {
-  if (value == null || isNaN(value)) return "0.00";
+  if (value == null || isNaN(value) || Number(value) === 0) return "-";
   return Number(value).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 }
 
+function formatAccount(acct) {
+  if (!acct) return "";
+  var s = String(acct).replace(/[^0-9]/g, "");
+  if (s.length >= 10) return s.substr(0,3) + "-" + s.substr(3,1) + "-" + s.substr(4,5) + "-" + s.substr(9);
+  return acct;
+}
+
+function dashIfEmpty(value) {
+  if (value == null || value === "") return "-";
+  return value;
+}
+
 function formatDateTH(dateVal) {
-  if (!dateVal) return "";
+  if (!dateVal) return "-";
   var d = new Date(dateVal);
   if (isNaN(d.getTime())) return String(dateVal);
   var day = String(d.getDate()).padStart(2, "0");
@@ -61,23 +73,8 @@ function rowIndex(index, offset) {
 }
 `;
 
-async function renderPdf(jsreport, templateContent, data, chromeOpts) {
-    const result = await jsreport.render({
-        template: {
-            content: templateContent,
-            engine: "handlebars",
-            recipe: "chrome-pdf",
-            helpers: HELPERS_JS,
-            chrome: chromeOpts,
-        },
-        data: data,
-    });
-
-    const chunks = [];
-    for await (const chunk of result.stream) {
-        chunks.push(chunk);
-    }
-    return Buffer.concat(chunks);
+async function renderPdf(pdfRenderer, templateContent, data, chromeOpts) {
+    return pdfRenderer.renderPdf(templateContent, data, HELPERS_JS, chromeOpts);
 }
 
 /**
@@ -146,24 +143,39 @@ router.post("/rptm0009", async (req, res) => {
     // CSV export
     if (format === "csv") {
       const csvRows = [
-        ["ลำดับ", "วันที่", "เลขบัญชี", "ชื่อบัญชี", "ยอดคงเหลือ", "ดอกเบี้ยสะสม", "วันที่ครบดิว"].join(","),
-        ...data.records.map((r) =>
-          [
+        ["ลำดับ", "วันที่", "เลขบัญชี", "ชื่อบัญชี", "ยอดคงเหลือ", "ดอกเบี้ยสะสม", "วันที่ครบดิว", "ระยะเวลาวัน", "คิดดอก(เดือน)", "ดอกเบี้ยถึงวันครบ", "8วัน-1เดือน", "> 1-3เดือน", "> 3-6เดือน", "> 6-12เดือน", "> 1-5ปี"].join(","),
+        ...data.records.map((r) => {
+          const fmtNum = (v) => {
+            if (v == null || v === "" || Number(v) === 0) return "-";
+            return `"${Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}"`;
+          };
+          const fmtInt = (v) => (v == null || v === "" || v === 0) ? "-" : v;
+          const fmtDate = (d) => d ? new Date(d).toLocaleDateString("th-TH") : "-";
+          return [
             r.ROW_NUM || "",
-            r.REC_DATE ? new Date(r.REC_DATE).toLocaleDateString("th-TH") : "",
-            r.ACCOUNT_NO || "",
-            r.ACCOUNT_NAME || "",
-            r.BALANCE || 0,
-            r.ACC_INTEREST || 0,
-            r.DUE_DATE ? new Date(r.DUE_DATE).toLocaleDateString("th-TH") : "",
-          ].join(",")
+            fmtDate(r.REC_DATE),
+            r.ACCOUNT_NO ? r.ACCOUNT_NO.replace(/^(\d{3})(\d)(\d{5})(\d+)$/, "$1-$2-$3-$4") : "",
+            `"${r.ACCOUNT_NAME || ""}"`,
+            fmtNum(r.BALANCE),
+            fmtNum(r.ACC_INTEREST),
+            fmtDate(r.DUE_DATE),
+            fmtInt(r.DURATION_DAYS),
+            fmtInt(r.INT_MONTHS),
+            fmtNum(r.INT_TO_DUE),
+            fmtNum(r.BUCKET_8D_1M),
+            fmtNum(r.BUCKET_1_3M),
+            fmtNum(r.BUCKET_3_6M),
+            fmtNum(r.BUCKET_6_12M),
+            fmtNum(r.BUCKET_1_5Y),
+          ].join(",");
+        }
         ),
       ];
       res.set({
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="rptm0009_report_${Date.now()}.csv"`,
       });
-      return res.send("uFEFF" + csvRows.join("n"));
+      return res.send("\uFEFF" + csvRows.join("\n"));
     }
 
     // Embed THSarabunNew fonts
@@ -182,7 +194,7 @@ router.post("/rptm0009", async (req, res) => {
 
     const templatePath = path.join(__dirname, "../../templates/deposit-rptm0009/content.html");
     const templateContent = fs.readFileSync(templatePath, "utf-8");
-    const jsreport = req.app.get("jsreport");
+    const pdfRenderer = req.app.get("pdfRenderer");
 
     const CHUNK_SIZE = 3000;
     let pdfBuffer;
@@ -196,11 +208,13 @@ router.post("/rptm0009", async (req, res) => {
       const pdfBuffers = [];
       for (let i = 0; i < totalChunks; i++) {
         const chunkRecords = allRecords.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+        const isLast = (i === totalChunks - 1);
         const chunkData = {
           ...data,
           records: chunkRecords,
           _rowOffset: i * CHUNK_SIZE,
           _chunkInfo: `หน้าชุดที่ ${i + 1}/${totalChunks}`,
+          totals: isLast ? data.totals : null,
         };
         const chunkMsg = `กำลังสร้างหน้าชุดที่ ${i + 1}/${totalChunks} (${chunkRecords.length.toLocaleString('en-US')} รายการ)...`;
         
@@ -213,7 +227,7 @@ router.post("/rptm0009", async (req, res) => {
             suffix: ` รายการ)...`
         });
         
-        const buf = await renderPdf(jsreport, templateContent, chunkData, CHROME_LANDSCAPE);
+        const buf = await renderPdf(pdfRenderer, templateContent, chunkData, CHROME_LANDSCAPE);
         pdfBuffers.push(buf);
       }
 
@@ -235,7 +249,7 @@ router.post("/rptm0009", async (req, res) => {
         prefix: `กำลังสร้างเอกสาร PDF (`,
         suffix: ` รายการ)...`
       });
-      pdfBuffer = await renderPdf(jsreport, templateContent, data, CHROME_LANDSCAPE);
+      pdfBuffer = await renderPdf(pdfRenderer, templateContent, data, CHROME_LANDSCAPE);
       emitProgress(clientId, `สร้างเอกสารเสร็จสมบูรณ์ เตรียมส่งไฟล์...`);
     }
 

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    {{#if fonts.regular}}
+    <style>
+        @font-face {
+            font-family: 'THSarabunNew';
+            src: url('{{{fonts.regular}}}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
+    {{/if}}
+    {{#if fonts.bold}}
+    <style>
+        @font-face {
+            font-family: 'THSarabunNew';
+            src: url('{{{fonts.bold}}}') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+    </style>
+    {{/if}}
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 8mm 8mm 12mm 8mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'THSarabunNew', 'Sarabun', 'Tahoma', 'Arial', sans-serif;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        /* ===== HEADER ===== */
+        .report-header {
+            display: flex;
+            align-items: flex-start;
+            border: 1px solid #999;
+            border-radius: 4px;
+            padding: 8px 12px;
+            background: #fff;
+            width: 100%;
+        }
+
+        .header-cell {
+            padding: 0 0 8px 0;
+            border: none;
+            background: none;
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .header-info .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .header-info .date {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .header-info .coop-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* ===== TABLE ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead th {
+            background: #e0e0e0;
+            color: #000;
+            padding: 4px 6px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            border-bottom: 1px solid #999;
+            border-top: 1px solid #999;
+        }
+
+        tbody td {
+            padding: 3px 6px;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fdfdfd;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="header-cell" colspan="15">
+                    <div class="report-header">
+                        <div class="header-info">
+                            <div class="title">[RPTM0009] รายงาน 7 คำนวณเงินฝาก 24</div>
+                            <div class="date">{{filterDesc}}</div>
+                            <div class="coop-name">{{coopName}}</div>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class="text-center" style="width: 5%">ลำดับ</th>
+                <th class="text-center" style="width: 12%">วันที่</th>
+                <th class="text-center" style="width: 15%">เลขบัญชี</th>
+                <th style="width: 30%">ชื่อบัญชี</th>
+                <th class="text-right" style="width: 13%">ยอดคงเหลือ</th>
+                <th class="text-right" style="width: 13%">ดอกเบี้ยสะสม</th>
+                <th class="text-center" style="width: 12%">วันที่ครบดิว</th>
+                <th class="text-right" style="width: 7%">ระยะเวลาวัน</th>
+                <th class="text-right" style="width: 7%">คิดดอก(เดือน)</th>
+                <th class="text-right" style="width: 10%">ดอกเบี้ยถึงวันครบ</th>
+                <th class="text-right" style="width: 10%">8วัน-1เดือน</th>
+                <th class="text-right" style="width: 10%">> 1-3เดือน</th>
+                <th class="text-right" style="width: 10%">> 3-6เดือน</th>
+                <th class="text-right" style="width: 10%">> 6-12เดือน</th>
+                <th class="text-right" style="width: 10%">> 1-5ปี</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each records}}
+            <tr>
+                <td class="text-center">{{rowIndex @index @root._rowOffset}}</td>
+                <td class="text-center">{{formatDateTH this.REC_DATE}}</td>
+                <td class="text-center">{{formatAccount this.ACCOUNT_NO}}</td>
+                <td>{{this.ACCOUNT_NAME}}</td>
+                <td class="text-right">{{formatNumber this.BALANCE}}</td>
+                <td class="text-right">{{formatNumber this.ACC_INTEREST}}</td>
+                <td class="text-center">{{formatDateTH this.DUE_DATE}}</td>
+                <td class="text-right">{{dashIfEmpty this.DURATION_DAYS}}</td>
+                <td class="text-right">{{dashIfEmpty this.INT_MONTHS}}</td>
+                <td class="text-right">{{formatNumber this.INT_TO_DUE}}</td>
+                <td class="text-right">{{formatNumber this.BUCKET_8D_1M}}</td>
+                <td class="text-right">{{formatNumber this.BUCKET_1_3M}}</td>
+                <td class="text-right">{{formatNumber this.BUCKET_3_6M}}</td>
+                <td class="text-right">{{formatNumber this.BUCKET_6_12M}}</td>
+                <td class="text-right">{{formatNumber this.BUCKET_1_5Y}}</td>
+            </tr>
+            {{/each}}
+            {{#if totals}}
+            <tr style="font-weight: bold; border-top: 2px solid #333;">
+                <td colspan="9" class="text-right" style="padding: 4px 6px; font-size: 14px;">รวมทั้งสิ้น</td>
+                <td class="text-right" style="padding: 4px 6px; font-size: 14px;">{{formatNumber totals.INT_TO_DUE}}</td>
+                <td class="text-right" style="padding: 4px 6px; font-size: 14px;">{{formatNumber totals.BUCKET_8D_1M}}</td>
+                <td class="text-right" style="padding: 4px 6px; font-size: 14px;">{{formatNumber totals.BUCKET_1_3M}}</td>
+                <td class="text-right" style="padding: 4px 6px; font-size: 14px;">{{formatNumber totals.BUCKET_3_6M}}</td>
+                <td class="text-right" style="padding: 4px 6px; font-size: 14px;">{{formatNumber totals.BUCKET_6_12M}}</td>
+                <td class="text-right" style="padding: 4px 6px; font-size: 14px;">{{formatNumber totals.BUCKET_1_5Y}}</td>
+            </tr>
+            {{/if}}
+        </tbody>
+    </table>
+
+</body>
+
+</html>
